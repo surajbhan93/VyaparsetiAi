@@ -7,6 +7,6 @@ const router = express.Router();
 
 const limiter = rateLimit({ windowMs: 60 * 1000, max: 10 });
 
-router.post("/", limiter, validateRequest, replyToReview);
+router.post("/reply", limiter, validateRequest, replyToReview);
 
 export default router;

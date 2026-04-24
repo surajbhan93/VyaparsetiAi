@@ -12,10 +12,11 @@ const toneInstructions = {
   apologetic: 'Use a sincere and apologetic tone if there is any concern.',
 };
 
-export const buildPrompt = ({ businessName, review, rating, customerName, tone, sentiment, variationSeed }) => {
+export const buildPrompt = ({ businessName, review, rating, customerName, tone, sentiment, variationSeed, strict = false }) => {
   const variation = variations[variationSeed];
   const toneInstruction = toneInstructions[tone] || toneInstructions.professional;
-  const nameInstruction = customerName ? `The customer's name is ${customerName}. Use their name naturally.` : '';
+  const nameInstruction = customerName ? `The customer's name is ${customerName}. Use their name naturally at least once.` : '';
+  const strictInstruction = strict ? `- You MUST address the customer by name.\n- You MUST include an expression of gratitude.\n- End the reply with a period, exclamation, or question mark.\n- Do NOT use any generic phrases.` : '';
 
   return `You are a professional reply writer for ${businessName}.
 
@@ -31,5 +32,6 @@ Instructions:
 - Keep the reply between 60 and 120 words.
 - Do not use generic phrases like "We value your feedback" or "Thank you for your review".
 - Do not mention ratings or star counts.
-- Write only the reply. No subject line. No sign-off label.`;
+- Write only the reply. No subject line. No sign-off label.
+${strictInstruction}`;
 };

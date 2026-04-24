@@ -19,9 +19,20 @@ export const replyToReview = async (req, res, next) => {
     const variationSeed = await getVariationSeed(review);
 
     const prompt = buildPrompt({ businessName, review, rating, customerName, tone, sentiment, variationSeed });
-    const reply = await generateReply(prompt);
+    let reply = await generateReply(prompt);
+    let replyScore = scoreReply(reply, sentiment, customerName);
 
-    const replyScore = scoreReply(reply, sentiment, customerName);
+    if (replyScore < 60) {
+      const strictPrompt = buildPrompt({ businessName, review, rating, customerName, tone, sentiment, variationSeed, strict: true });
+      const retryReply = await generateReply(strictPrompt);
+      const retryScore = scoreReply(retryReply, sentiment, customerName);
+
+      if (retryScore > replyScore) {
+        reply = retryReply;
+        replyScore = retryScore;
+      }
+    }
+
     const replyAfterHours = DELAY_BY_SENTIMENT[sentiment];
 
     await saveReply({ businessName, review, rating, customerName, tone, sentiment, reply, replyScore });
