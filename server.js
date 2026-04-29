@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import connectDB from './src/config/db.js';
 import reviewRoutes from './src/routes/reviewRoutes.js';
+import businessRoutes from './src/routes/businessRoute.js';
 import errorHandler from './src/middlewares/errorHandler.js';
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use('/api/reviews', reviewRoutes);
 
+app.use('/api/business', businessRoutes);
 app.use(errorHandler);
 
 const startServer = async () => {
